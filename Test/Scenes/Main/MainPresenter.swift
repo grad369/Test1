@@ -12,20 +12,17 @@
 
 import UIKit
 
-protocol MainPresentationLogic
-{
-  func presentShowGreeting(response: Main.ShowGreeting.Response)
+protocol MainPresentationLogic {
+   func presentShowGreeting(response: Main.ShowGreeting.Response)
 }
 
-class MainPresenter: MainPresentationLogic
-{
-  weak var viewController: MainDisplayLogic?
-  
-  // MARK: Show greeting
-  
-  func presentShowGreeting(response: Main.ShowGreeting.Response)
-  {
-    let viewModel = Main.ShowGreeting.ViewModel(userID: response.userID)
-    viewController?.displayShowGreeting(viewModel: viewModel)
-  }
+class MainPresenter: MainPresentationLogic {
+    weak var viewController: MainDisplayLogic?
+
+    // MARK: Show greeting
+
+    func presentShowGreeting(response: Main.ShowGreeting.Response) {
+        //let viewModel = Main.ShowGreeting.ViewModel(userID: response.userID)
+        //viewController?.displayShowGreeting(viewModel: viewModel)
+    }
 }

@@ -11,81 +11,69 @@
 //
 
 import UIKit
+import SnapKit
 
-protocol MainDisplayLogic: AnyObject
-{
-  func displayShowGreeting(viewModel: Main.ShowGreeting.ViewModel)
+
+protocol MainDisplayLogic: AnyObject {
 }
 
-class MainViewController: UIViewController, MainDisplayLogic
-{
-  var interactor: MainBusinessLogic?
-  var router: (NSObjectProtocol & MainRoutingLogic & MainDataPassing)?
 
-  // MARK: Object lifecycle
+class MainViewController: BaseViewController, MainDisplayLogic {    
+    var interactor: MainBusinessLogic?
+    var router: (NSObjectProtocol & MainRoutingLogic & MainDataPassing)?
+
+    // MARK: Setup
   
-  override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?)
-  {
-    super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-    setup()
-  }
-  
-  required init?(coder aDecoder: NSCoder)
-  {
-    super.init(coder: aDecoder)
-    setup()
-  }
-  
-  // MARK: Setup
-  
-  private func setup()
-  {
-    let viewController = self
-    let interactor = MainInteractor()
-    let presenter = MainPresenter()
-    let router = MainRouter()
-    viewController.interactor = interactor
-    viewController.router = router
-    interactor.presenter = presenter
-    presenter.viewController = viewController
-    router.viewController = viewController
-    router.dataStore = interactor
-  }
-  
-  // MARK: Routing
-  
-  override func prepare(for segue: UIStoryboardSegue, sender: Any?)
-  {
-    if let scene = segue.identifier {
-      let selector = NSSelectorFromString("routeTo\(scene)WithSegue:")
-      if let router = router, router.responds(to: selector) {
-        router.perform(selector, with: segue)
-      }
+    override func setup() {
+        let viewController = self
+        let interactor = MainInteractor()
+        let presenter = MainPresenter()
+        let router = MainRouter()
+        viewController.interactor = interactor
+        viewController.router = router
+        interactor.presenter = presenter
+        presenter.viewController = viewController
+        router.viewController = viewController
+        router.dataStore = interactor
     }
-  }
   
-  // MARK: View lifecycle
-  
-  override func viewDidLoad()
-  {
-    super.viewDidLoad()
-    showGreeting()
-  }
-  
-  // MARK: Show greeting
-  
-  @IBOutlet weak var greetingLabel: UILabel!
-  
-  func showGreeting()
-  {
-    let request = Main.ShowGreeting.Request()
-    interactor?.showGreeting(request: request)
-  }
-  
-  func displayShowGreeting(viewModel: Main.ShowGreeting.ViewModel)
-  {
-    if let userID = viewModel.userID {
-      greetingLabel.text = "Hello, \(userID)"
+    // MARK: View lifecycle
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        configureUI()
+        //showGreeting()
     }
-  }
+
+    // MARK: Show greeting
+
+    private var greetingLabel: UILabel!
+
+    private func configureUI() {
+        view.backgroundColor = .yellow
+        
+        let view1 = UIView(frame: .init(x: 50, y: 50, width: 100, height: 100))
+        view1.backgroundColor = .cyan
+        view.addSubview(view1)
+        
+        view1.snp.makeConstraints { make in
+            make.center.equalTo(CGPoint(x: 200, y: 200))
+            make.size.equalTo(CGSize(width: 150, height: 100))
+        }
+    }
+    
+    override func updateViewConstraints() {
+        super.updateViewConstraints()
+    }
+    
+//    func showGreeting() {
+//        let request = Main.ShowGreeting.Request()
+//        interactor?.showGreeting(request: request)
+//    }
+//
+//    func displayShowGreeting(viewModel: Main.ShowGreeting.ViewModel) {
+//        if let userID = viewModel.userID {
+//            greetingLabel.text = "Hello, \(userID)"
+//        }
+//    }
 }

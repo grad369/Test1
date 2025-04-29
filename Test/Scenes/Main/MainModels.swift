@@ -12,22 +12,18 @@
 
 import UIKit
 
-enum Main
-{
-  // MARK: Use cases
-  
-  enum ShowGreeting
-  {
-    struct Request
-    {
+enum Main {
+    // MARK: Use cases
+    enum ShowGreeting {
+        struct Request {
+        }
+        
+        struct Response {
+           var userID: String?
+        }
+        
+        struct ViewModel {
+          var userID: String?
+        }
     }
-    struct Response
-    {
-      var userID: String?
-    }
-    struct ViewModel
-    {
-      var userID: String?
-    }
-  }
 }

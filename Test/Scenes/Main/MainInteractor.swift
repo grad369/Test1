@@ -12,26 +12,21 @@
 
 import UIKit
 
-protocol MainBusinessLogic
-{
-  func showGreeting(request: Main.ShowGreeting.Request)
+protocol MainBusinessLogic {
+    func showGreeting(request: Main.ShowGreeting.Request)
 }
 
-protocol MainDataStore
-{
+protocol MainDataStore {
 }
 
-class MainInteractor: MainBusinessLogic, MainDataStore
-{
-  var presenter: MainPresentationLogic?
-  var worker: MainWorker?
-  
-  // MARK: Show greeting
-  
-  func showGreeting(request: Main.ShowGreeting.Request)
-  {
-//    let userID = AuthenticationWorker().getUserID()
-//    let response = Main.ShowGreeting.Response(userID: userID)
-//    presenter?.presentShowGreeting(response: response)
-  }
+class MainInteractor: MainBusinessLogic, MainDataStore {
+    var presenter: MainPresentationLogic?
+
+    // MARK: Show greeting
+
+    func showGreeting(request: Main.ShowGreeting.Request) {
+        //    let userID = AuthenticationWorker().getUserID()
+        //    let response = Main.ShowGreeting.Response(userID: userID)
+        //    presenter?.presentShowGreeting(response: response)
+    }
 }

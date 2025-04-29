@@ -28,8 +28,7 @@ class DetailInteractor: DetailBusinessLogic, DetailDataStore
   
   // MARK: Show greeting
   
-  func showGreeting(request: Detail.ShowGreeting.Request)
-  {
+  func showGreeting(request: Detail.ShowGreeting.Request) {
 //    let userID = AuthenticationWorker().getUserID()
 //    let response = Detail.ShowGreeting.Response(userID: userID)
 //    presenter?.presentShowGreeting(response: response)

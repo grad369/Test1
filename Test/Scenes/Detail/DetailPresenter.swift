@@ -23,8 +23,7 @@ class DetailPresenter: DetailPresentationLogic
   
   // MARK: Show greeting
   
-  func presentShowGreeting(response: Detail.ShowGreeting.Response)
-  {
+  func presentShowGreeting(response: Detail.ShowGreeting.Response) {
     let viewModel = Detail.ShowGreeting.ViewModel(userID: response.userID)
     viewController?.displayShowGreeting(viewModel: viewModel)
   }
