@@ -21,6 +21,8 @@ protocol MainDisplayLogic: AnyObject {
 class MainViewController: BaseViewController, MainDisplayLogic {    
     var interactor: MainBusinessLogic?
     var router: (NSObjectProtocol & MainRoutingLogic & MainDataPassing)?
+    
+    let api = ApiService()
 
     // MARK: Setup
   
@@ -42,6 +44,16 @@ class MainViewController: BaseViewController, MainDisplayLogic {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
+        Task.detached {
+            do {
+                let dd = try await self.api.next(type: Char.self)
+                print(dd)
+            } catch {
+                print(error.localizedDescription)
+            }
+            
+        }
+        
         //showGreeting()
     }
 
