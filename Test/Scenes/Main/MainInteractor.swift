@@ -13,7 +13,8 @@
 import UIKit
 
 protocol MainBusinessLogic {
-    func showGreeting(request: Main.ShowGreeting.Request)
+    func showFromDBCharacters()
+    func loadNextCharacters()
 }
 
 protocol MainDataStore {
@@ -21,8 +22,29 @@ protocol MainDataStore {
 
 class MainInteractor: MainBusinessLogic, MainDataStore {
     var presenter: MainPresentationLogic?
+    var coreDataWorker: CoreDataWorkerProtocol?
+    var apiWorker: ApiWorkerProtocol?
 
-    // MARK: Show greeting
+    func showFromDBCharacters() {
+        let result = coreDataWorker?.fetchAllChars()
+        switch result {
+        case .success(let chars):
+            presenter?.presentFromDB(cdChars: chars)
+        case .failure(let error):
+            presenter?.showAlert(type: .warning, text: TestError.text(from: error))
+        default: break
+        }
+    }
+    
+    func loadNextCharacters() {
+        Task.detached {
+            do {
+                //let dd = try await self.api.next(type: Char.self)
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
 
     func showGreeting(request: Main.ShowGreeting.Request) {
         //    let userID = AuthenticationWorker().getUserID()

@@ -12,8 +12,9 @@
 
 import UIKit
 
-protocol MainPresentationLogic {
-   func presentShowGreeting(response: Main.ShowGreeting.Response)
+protocol MainPresentationLogic: BasePresentationLogic {
+    func presentFromDB(cdChars: [CDCharacter])
+    func addNew(chars: [Char])
 }
 
 class MainPresenter: MainPresentationLogic {
@@ -21,8 +22,23 @@ class MainPresenter: MainPresentationLogic {
 
     // MARK: Show greeting
 
-    func presentShowGreeting(response: Main.ShowGreeting.Response) {
-        //let viewModel = Main.ShowGreeting.ViewModel(userID: response.userID)
-        //viewController?.displayShowGreeting(viewModel: viewModel)
+    func presentFromDB(cdChars: [CDCharacter]) {
+        let chars = convertToChars(cdChars: cdChars)
+        
+    }
+    
+    func addNew(chars: [Char]) {
+        
+    }
+    
+    private func convertToChars(cdChars: [CDCharacter]) -> [Char] {
+        cdChars.map { cdChar in
+            var char = Char(id: Int(cdChar.id))
+            char.gender = cdChar.gender
+            char.image = cdChar.image
+            char.created = cdChar.created
+            char.name = cdChar.name
+            return char
+        }
     }
 }

@@ -6,13 +6,16 @@
 //
 import Foundation
 
+protocol ApiServiceProtocol {
+    func next<T: Decodable>(url: String?, type: T.Type) async throws -> [T]
+}
 
-class ApiService {
+class ApiService: ApiServiceProtocol {
     @UserDefault(key: "com.Test.ApiService.lastAccessRequest", defaultValue: "https://rickandmortyapi.com/api/character")
-    var nextRequest: String
+    private var nextRequest: String
     
     @UserDefault(key: "com.Test.ApiService.allDownload", defaultValue: false)
-    var allDownload: Bool
+    private var allDownload: Bool
         
     func next<T: Decodable>(url: String? = nil, type: T.Type) async throws -> [T] {
         guard !allDownload else { throw TestError.allDownload }

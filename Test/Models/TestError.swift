@@ -23,4 +23,9 @@ enum TestError: Error {
             return "Your parser is bad"
         }
     }
+    
+    static func text(from error: Error) -> String {
+        guard let testError = error as? TestError else { return error.localizedDescription }
+        return testError.text
+    }
 }

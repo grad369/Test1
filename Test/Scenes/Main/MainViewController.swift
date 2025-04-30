@@ -15,6 +15,8 @@ import SnapKit
 
 
 protocol MainDisplayLogic: AnyObject {
+    var chars: [Char] { set get }
+    //func displayCharacters()
 }
 
 
@@ -22,7 +24,7 @@ class MainViewController: BaseViewController, MainDisplayLogic {
     var interactor: MainBusinessLogic?
     var router: (NSObjectProtocol & MainRoutingLogic & MainDataPassing)?
     
-    let api = ApiService()
+    var chars: [Char] = []
 
     // MARK: Setup
   
@@ -31,9 +33,12 @@ class MainViewController: BaseViewController, MainDisplayLogic {
         let interactor = MainInteractor()
         let presenter = MainPresenter()
         let router = MainRouter()
+        let worker = MainWorker()
         viewController.interactor = interactor
         viewController.router = router
         interactor.presenter = presenter
+        interactor.coreDataWorker = worker
+        interactor.apiWorker = worker
         presenter.viewController = viewController
         router.viewController = viewController
         router.dataStore = interactor
@@ -44,17 +49,8 @@ class MainViewController: BaseViewController, MainDisplayLogic {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
-        Task.detached {
-            do {
-                let dd = try await self.api.next(type: Char.self)
-                print(dd)
-            } catch {
-                print(error.localizedDescription)
-            }
-            
-        }
-        
-        //showGreeting()
+               
+        interactor?.showFromDBCharacters()
     }
 
     // MARK: Show greeting
@@ -64,8 +60,12 @@ class MainViewController: BaseViewController, MainDisplayLogic {
     private func configureUI() {
         view.backgroundColor = .yellow
         
-        let view1 = UIView(frame: .init(x: 50, y: 50, width: 100, height: 100))
+        let view1 = UIButton(type: .system)
+        view1.frame = .init(x: 50, y: 50, width: 100, height: 100)
         view1.backgroundColor = .cyan
+        view1.addAction(UIAction(handler: {_ in
+            AlertView.show(with: .warning, text: TestError.allDownload.text)
+        }), for: .touchUpInside)
         view.addSubview(view1)
         
         view1.snp.makeConstraints { make in
@@ -78,14 +78,13 @@ class MainViewController: BaseViewController, MainDisplayLogic {
         super.updateViewConstraints()
     }
     
-//    func showGreeting() {
-//        let request = Main.ShowGreeting.Request()
-//        interactor?.showGreeting(request: request)
-//    }
-//
-//    func displayShowGreeting(viewModel: Main.ShowGreeting.ViewModel) {
-//        if let userID = viewModel.userID {
-//            greetingLabel.text = "Hello, \(userID)"
-//        }
-//    }
+    func showCharacters() {
+        //let request = Main.ShowGreeting.Request()
+        interactor?.showFromDBCharacters()
+    }
+    
+    
+    func loadNextCharacters() {
+        interactor?.loadNextCharacters()
+    }
 }
