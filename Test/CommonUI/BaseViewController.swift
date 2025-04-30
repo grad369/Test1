@@ -29,6 +29,6 @@ class BaseViewController: UIViewController {
     
     override var shouldAutorotate: Bool {
         true
-    }    
+    }
     
 }

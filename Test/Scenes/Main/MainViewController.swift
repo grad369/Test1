@@ -46,8 +46,7 @@ class MainViewController: BaseViewController, MainDisplayLogic {
         configureUI()
         Task.detached {
             do {
-                let dd = try await self.api.next(type: Char.self)
-                print(dd)
+                //let dd = try await self.api.next(type: Char.self)
             } catch {
                 print(error.localizedDescription)
             }
@@ -64,8 +63,12 @@ class MainViewController: BaseViewController, MainDisplayLogic {
     private func configureUI() {
         view.backgroundColor = .yellow
         
-        let view1 = UIView(frame: .init(x: 50, y: 50, width: 100, height: 100))
+        let view1 = UIButton(type: .system)
+        view1.frame = .init(x: 50, y: 50, width: 100, height: 100)
         view1.backgroundColor = .cyan
+        view1.addAction(UIAction(handler: {_ in
+            AlertView.show(with: .warning, text: TestError.allDownload.text)
+        }), for: .touchUpInside)
         view.addSubview(view1)
         
         view1.snp.makeConstraints { make in
