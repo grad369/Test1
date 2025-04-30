@@ -20,11 +20,9 @@ protocol MainPresentationLogic: BasePresentationLogic {
 class MainPresenter: MainPresentationLogic {
     weak var viewController: MainDisplayLogic?
 
-    // MARK: Show greeting
-
     func presentFromDB(cdChars: [CDCharacter]) {
         let chars = convertToChars(cdChars: cdChars)
-        
+        viewController?.chars = chars
     }
     
     func addNew(chars: [Char]) {

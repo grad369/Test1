@@ -6,11 +6,8 @@
 //
 import Foundation
 
-protocol ApiServiceProtocol {
-    func next<T: Decodable>(url: String?, type: T.Type) async throws -> [T]
-}
 
-class ApiService: ApiServiceProtocol {
+class ApiService {
     @UserDefault(key: "com.Test.ApiService.lastAccessRequest", defaultValue: "https://rickandmortyapi.com/api/character")
     private var nextRequest: String
     

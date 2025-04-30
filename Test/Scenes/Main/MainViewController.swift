@@ -50,7 +50,7 @@ class MainViewController: BaseViewController, MainDisplayLogic {
         super.viewDidLoad()
         configureUI()
                
-        interactor?.showFromDBCharacters()
+        interactor?.checkStateIsFirst()
     }
 
     // MARK: Show greeting

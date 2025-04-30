@@ -8,13 +8,14 @@ import CoreData
 
 
 protocol CoreDataWorkerProtocol {
+    var bdIsEmpty: Bool { get }
     func save(chars: [Char]) async -> Result<Void, Error>
     func fetchAllChars() -> Result<[CDCharacter], Error>
     func deleteAllChars() async -> Result<Void, Error>
 }
 
 protocol ApiWorkerProtocol {
-    func loadNewChars()
+    func loadNewChars() async -> Result<[Char], Error>
 }
 
 class MainWorker: CoreDataWorkerProtocol, ApiWorkerProtocol {
@@ -22,6 +23,10 @@ class MainWorker: CoreDataWorkerProtocol, ApiWorkerProtocol {
     private let apiService = ApiService()
     
     // MARK: CoreDataWorkerProtocol -
+    var bdIsEmpty: Bool {
+        coreDataStack.isEntityEmpty(entityType: CDCharacter.self, context: coreDataStack.mainContext)
+    }
+    
     func save(chars: [Char]) async -> Result<Void, Error> {
         let context = coreDataStack.backgroundContext()
         
@@ -76,7 +81,12 @@ class MainWorker: CoreDataWorkerProtocol, ApiWorkerProtocol {
     }
     
     // MARK: ApiWorkerProtocol -
-    func loadNewChars() {
-        
+    func loadNewChars() async -> Result<[Char], Error> {
+        do {
+            let chars = try await apiService.next(type: Char.self)
+            return .success(chars)
+        } catch {
+            return .failure(error)
+        }
     }
 }

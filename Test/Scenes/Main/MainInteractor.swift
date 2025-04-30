@@ -13,6 +13,7 @@
 import UIKit
 
 protocol MainBusinessLogic {
+    func checkStateIsFirst()
     func showFromDBCharacters()
     func loadNextCharacters()
 }
@@ -24,31 +25,43 @@ class MainInteractor: MainBusinessLogic, MainDataStore {
     var presenter: MainPresentationLogic?
     var coreDataWorker: CoreDataWorkerProtocol?
     var apiWorker: ApiWorkerProtocol?
+    
+    func checkStateIsFirst() {
+        if coreDataWorker?.bdIsEmpty == true {
+            loadNextCharacters()
+        } else {
+            showFromDBCharacters()
+        }
+    }
 
     func showFromDBCharacters() {
-        let result = coreDataWorker?.fetchAllChars()
-        switch result {
-        case .success(let chars):
-            presenter?.presentFromDB(cdChars: chars)
-        case .failure(let error):
-            presenter?.showAlert(type: .warning, text: TestError.text(from: error))
-        default: break
-        }
+        guard let result = coreDataWorker?.fetchAllChars(),
+              let chars = parse(result: result) else { return }
+        presenter?.presentFromDB(cdChars: chars)
     }
     
     func loadNextCharacters() {
-        Task.detached {
-            do {
-                //let dd = try await self.api.next(type: Char.self)
-            } catch {
-                print(error.localizedDescription)
+        Task {
+            guard let result = await self.apiWorker?.loadNewChars(),
+                  let chars = self.parse(result: result),
+                  let saveResult = await self.coreDataWorker?.save(chars: chars) else { return }
+            
+            self.parse(result: saveResult)
+            await MainActor.run {
+                self.presenter?.addNew(chars: chars)               
             }
         }
     }
-
-    func showGreeting(request: Main.ShowGreeting.Request) {
-        //    let userID = AuthenticationWorker().getUserID()
-        //    let response = Main.ShowGreeting.Response(userID: userID)
-        //    presenter?.presentShowGreeting(response: response)
+    
+    func parse<T>(result: Result<T, Error>) -> T? {
+        switch result {
+        case .success(let value):
+            return value
+        case .failure(let error):
+            DispatchQueue.main.async {
+                self.presenter?.showAlert(type: .warning, text: TestError.text(from: error))
+            }
+            return nil
+        }
     }
 }
