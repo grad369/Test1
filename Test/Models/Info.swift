@@ -10,7 +10,7 @@ import Foundation
 
 struct Response<T: Decodable>: Decodable {
     var info: Info
-    var results: [T]//[Dictionary<String, String>]//[T] = []
+    var results: [T]
 }
 
 struct Info: Decodable {

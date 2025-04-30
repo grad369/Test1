@@ -79,23 +79,20 @@ class AlertView: UIView {
         }
         
         backgroundView.layoutIfNeeded()
-        backgroundView.transform = CGAffineTransform(translationX: 0, y: -backgroundView.bounds.height - 20)
     }
     
     private func show() {
-        //backgroundView.transform = CGAffineTransform(translationX: 0, y: -backgroundView.bounds.height)
-        //backgroundView.layoutIfNeeded()
+        backgroundView.transform = CGAffineTransform(translationX: 0, y: -backgroundView.bounds.height)
         
         UIView.animate(withDuration: 0.4) {
             self.backgroundView.transform = .identity
-            self.backgroundView.layoutIfNeeded()
         }
     }
     
     private func hide() {
         UIView.animate(withDuration: 0.4) {
             self.backgroundView.transform = CGAffineTransform(translationX: 0, y: -self.backgroundView.bounds.height - 20)
-            self.backgroundView.layoutIfNeeded()
+            //self.backgroundView.layoutIfNeeded()
         } completion: { _ in
             self.backgroundView.removeFromSuperview()
             self.complete?()
