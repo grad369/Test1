@@ -79,7 +79,10 @@ class MainViewController: BaseViewController, MainDisplayLogic {
     }()
 
     private func configureUI() {
+        view.backgroundColor = .gray1
+        
         navigationItem.title = "List"
+        navigationController?.navigationBar.tintColor = .purple1
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         
@@ -89,11 +92,6 @@ class MainViewController: BaseViewController, MainDisplayLogic {
             make.trailing.equalToSuperview().offset(-20)
             make.bottom.equalToSuperview().offset(-20)
         }
-        view.backgroundColor = .yellow.withAlphaComponent(0.5)
-    }
-    
-    override func updateViewConstraints() {
-        super.updateViewConstraints()
     }
 }
 
@@ -103,7 +101,15 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: CharTableCell.self), for: indexPath) as? CharTableCell else { return UITableViewCell() }
+        guard let cell = tableView
+            .dequeueReusableCell(withIdentifier: String(describing: CharTableCell.self), for: indexPath) as? CharTableCell else {
+            return UITableViewCell()
+        }
+        
+        let selectedView = UIView()
+        selectedView.backgroundColor = .clear
+        cell.selectedBackgroundView = selectedView
+        
         cell.char = chars[indexPath.row]
         return cell
     }
@@ -114,6 +120,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
         let char = chars[indexPath.row]
         router?.showDetail(for: char)
     }

@@ -32,10 +32,24 @@ enum CharacterModels {
         var created: String?
         var gender: String?
         var image: String?
+        var episode: [String]?
         
         var createdDate: Date? {
             guard let created else { return nil }
             return created.date(dateFormat: .full)
+        }
+        
+        var descript: String {
+            switch (gender, createdDate) {
+            case (let gender?, let created?):
+                return gender + "    " + (created.text(dateFormat: .date) ?? "")
+            case (let gender?, nil):
+                return gender
+            case (nil, let created?):
+                return created.text(dateFormat: .date) ?? ""
+            case (nil, nil):
+                return ""
+            }
         }
     }
 }

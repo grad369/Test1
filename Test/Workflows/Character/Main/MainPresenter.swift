@@ -37,6 +37,9 @@ class MainPresenter: MainPresentationLogic {
             char.image = cdChar.image
             char.created = cdChar.created
             char.name = cdChar.name
+            char.episode = cdChar.episode?.allObjects
+                .compactMap({ $0 as? CDEpisode })
+                .compactMap { $0.episode } 
             return char
         }
     }

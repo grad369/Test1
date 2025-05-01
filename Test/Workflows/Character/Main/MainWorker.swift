@@ -42,6 +42,11 @@ class MainWorker: CoreDataWorkerProtocol, ApiWorkerProtocol {
             cdChar.created = char.created
             cdChar.gender = char.gender
             cdChar.image = char.image
+            for episode in char.episode ?? [] {
+                let cdEpisode = CDEpisode(context: context)
+                cdEpisode.episode = episode
+                cdChar.addToEpisode(cdEpisode)
+            }
         }
         
         return await self.coreDataStack.save(context: context)
@@ -54,6 +59,9 @@ class MainWorker: CoreDataWorkerProtocol, ApiWorkerProtocol {
         
         do {
             let chars = try context.fetch(fetchRequest)
+            chars.forEach { char in
+                char.episode?.forEach { context.refresh($0 as! NSManagedObject, mergeChanges: true) }
+            }
             return .success(chars)
         } catch {
             return .failure(error)

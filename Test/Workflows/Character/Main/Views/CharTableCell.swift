@@ -23,7 +23,9 @@ class CharTableCell: BaseTableViewCell {
     
     private lazy var backView: UIView = {
         let view = UIView()
-        view.backgroundColor = .yellow
+        view.backgroundColor = .clear
+        view.layer.borderColor = UIColor.purple1.cgColor
+        view.layer.borderWidth = 1
         view.layer.cornerRadius = 8
         contentView.addSubview(view)
         return view
@@ -76,24 +78,15 @@ class CharTableCell: BaseTableViewCell {
 
         cellImageView.af.cancelImageRequest()
         cellImageView.image = nil
+        titleLabel.text = ""
+        descriptLabel.text = ""
     }
     
     private func update() {
         guard let char else { return }
-        var descript = ""
-        switch (char.gender, char.createdDate) {
-        case (let gender?, let created?):
-            descript = gender + "    " + (created.text(dateFormat: .date) ?? "")
-        case (let gender?, nil):
-            descript = gender
-        case (nil, let created?):
-            descript = created.text(dateFormat: .date) ?? ""
-        case (nil, nil):
-            descript = ""
-        }
         
         titleLabel.text = char.name
-        descriptLabel.text = descript
+        descriptLabel.text = char.descript
         
         if let imageStr = char.image, let url = URL(string: imageStr) {
             cellImageView.af.setImage(withURL: url)

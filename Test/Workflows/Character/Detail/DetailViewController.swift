@@ -11,6 +11,8 @@
 //
 
 import UIKit
+import AlamofireImage
+import SnapKit
 
 
 class DetailViewController: BaseViewController {
@@ -24,15 +26,69 @@ class DetailViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
-    }
-  
-    // MARK: Privtes -
-    private func configureUI() {
-        
+        update()
     }
     
+    // MARK: Configure -
+    
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        label.textColor = .purple1
+        label.numberOfLines = 1
+        label.textAlignment = .left
+        label.text = "Episodes"
+        view.addSubview(label)
+        return label
+    }()
+    
+    private lazy var textView: UITextView = {
+        let textView = UITextView()
+        textView.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+        textView.textColor = UIColor.purple1
+        textView.backgroundColor = .clear
+        view.addSubview(textView)
+        return textView
+    }()
+    
+    private lazy var imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.layer.masksToBounds = true
+        view.addSubview(imageView)
+        return imageView
+    }()
+  
     private func update() {
         guard let char else { return }
+        
         navigationItem.title = char.name
+        textView.text = char.episode?.joined(separator: "\n")
+        
+        if let imageStr = char.image, let url = URL(string: imageStr) {
+            imageView.af.setImage(withURL: url)
+        }
+    }
+    
+    func configureUI() {
+        view.backgroundColor = .gray1
+        
+        imageView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(15)
+            make.bottom.equalTo(view.snp.centerY).inset(10)
+            make.horizontalEdges.equalToSuperview().inset(15)
+        }
+        
+        titleLabel.snp.makeConstraints { make in
+            make.height.equalTo(20)
+            make.top.equalTo(view.snp.centerY).offset(40)
+            make.horizontalEdges.equalToSuperview().inset(15)
+        }
+        
+        textView.snp.makeConstraints { make in
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(15)
+            make.top.equalTo(titleLabel.snp.bottom).offset(10)
+            make.horizontalEdges.equalToSuperview().inset(15)
+        }
     }
 }
