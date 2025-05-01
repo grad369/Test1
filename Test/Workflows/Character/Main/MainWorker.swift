@@ -8,13 +8,14 @@ import CoreData
 
 
 protocol CoreDataWorkerProtocol {
-    func save(chars: [Char]) async -> Result<Void, Error>
+    var dbIsEmpty: Bool { get }
+    func save(chars: [CharacterModels.Char]) async -> Result<Void, Error>
     func fetchAllChars() -> Result<[CDCharacter], Error>
     func deleteAllChars() async -> Result<Void, Error>
 }
 
 protocol ApiWorkerProtocol {
-    func loadNewChars()
+    func loadNewChars() async -> Result<[CharacterModels.Char], Error>
 }
 
 class MainWorker: CoreDataWorkerProtocol, ApiWorkerProtocol {
@@ -22,13 +23,17 @@ class MainWorker: CoreDataWorkerProtocol, ApiWorkerProtocol {
     private let apiService = ApiService()
     
     // MARK: CoreDataWorkerProtocol -
-    func save(chars: [Char]) async -> Result<Void, Error> {
+    var dbIsEmpty: Bool {
+        coreDataStack.isEntityEmpty(entityType: CDCharacter.self, context: coreDataStack.mainContext)
+    }
+    
+    func save(chars: [CharacterModels.Char]) async -> Result<Void, Error> {
         let context = coreDataStack.backgroundContext()
         
         let existCharIds = checkExistingChars(ids: chars.map { $0.id })
             .map { Int($0) }
         let noExistChars = chars
-            .filter { existCharIds.contains($0.id) }
+            .filter { !existCharIds.contains($0.id) }
         
         for char in noExistChars {
             let cdChar = CDCharacter(context: context)
@@ -37,6 +42,11 @@ class MainWorker: CoreDataWorkerProtocol, ApiWorkerProtocol {
             cdChar.created = char.created
             cdChar.gender = char.gender
             cdChar.image = char.image
+            for episode in char.episode ?? [] {
+                let cdEpisode = CDEpisode(context: context)
+                cdEpisode.episode = episode
+                cdChar.addToEpisode(cdEpisode)
+            }
         }
         
         return await self.coreDataStack.save(context: context)
@@ -49,6 +59,9 @@ class MainWorker: CoreDataWorkerProtocol, ApiWorkerProtocol {
         
         do {
             let chars = try context.fetch(fetchRequest)
+            chars.forEach { char in
+                char.episode?.forEach { context.refresh($0 as! NSManagedObject, mergeChanges: true) }
+            }
             return .success(chars)
         } catch {
             return .failure(error)
@@ -76,7 +89,12 @@ class MainWorker: CoreDataWorkerProtocol, ApiWorkerProtocol {
     }
     
     // MARK: ApiWorkerProtocol -
-    func loadNewChars() {
-        
+    func loadNewChars() async -> Result<[CharacterModels.Char], Error> {
+        do {
+            let chars = try await apiService.next(type: CharacterModels.Char.self)
+            return .success(chars)
+        } catch {
+            return .failure(error)
+        }
     }
 }

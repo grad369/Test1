@@ -48,6 +48,17 @@ class CoreDataStack {
         }
     }
     
+    func isEntityEmpty<T: NSManagedObject>(entityType: T.Type, context: NSManagedObjectContext) -> Bool {
+        let fetchRequest: NSFetchRequest<T> = T.fetchRequest() as! NSFetchRequest<T>
+        do {
+            let count = try context.count(for: fetchRequest)
+            return count == 0
+        } catch {
+            print("Ошибка при проверке: \(error)")
+            return false 
+        }
+    }
+    
     func deleteAll<T: NSManagedObject>(type: T.Type) async -> Result<Void, Error> {
         let context = backgroundContext()
             

@@ -12,32 +12,34 @@
 
 import UIKit
 
+
 protocol MainPresentationLogic: BasePresentationLogic {
     func presentFromDB(cdChars: [CDCharacter])
-    func addNew(chars: [Char])
+    func addNew(chars: [CharacterModels.Char])
 }
 
 class MainPresenter: MainPresentationLogic {
     weak var viewController: MainDisplayLogic?
 
-    // MARK: Show greeting
-
     func presentFromDB(cdChars: [CDCharacter]) {
         let chars = convertToChars(cdChars: cdChars)
-        
+        viewController?.chars = chars
     }
     
-    func addNew(chars: [Char]) {
-        
+    func addNew(chars: [CharacterModels.Char]) {
+        viewController?.chars += chars
     }
     
-    private func convertToChars(cdChars: [CDCharacter]) -> [Char] {
+    private func convertToChars(cdChars: [CDCharacter]) -> [CharacterModels.Char] {
         cdChars.map { cdChar in
-            var char = Char(id: Int(cdChar.id))
+            var char = CharacterModels.Char(id: Int(cdChar.id))
             char.gender = cdChar.gender
             char.image = cdChar.image
             char.created = cdChar.created
             char.name = cdChar.name
+            char.episode = cdChar.episode?.allObjects
+                .compactMap({ $0 as? CDEpisode })
+                .compactMap { $0.episode } 
             return char
         }
     }
