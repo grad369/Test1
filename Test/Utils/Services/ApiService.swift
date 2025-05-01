@@ -34,4 +34,9 @@ class ApiService {
         
         return parsedResponse.results
     }
+    
+    func clear() {
+        nextRequest = "https://rickandmortyapi.com/api/character"
+        allDownload = false
+    }
 }

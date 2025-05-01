@@ -26,7 +26,7 @@ class MainPresenter: MainPresentationLogic {
     }
     
     func addNew(chars: [Char]) {
-        
+        viewController?.chars += chars
     }
     
     private func convertToChars(cdChars: [CDCharacter]) -> [Char] {

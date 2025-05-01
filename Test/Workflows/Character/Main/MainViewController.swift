@@ -24,7 +24,11 @@ class MainViewController: BaseViewController, MainDisplayLogic {
     var interactor: MainBusinessLogic?
     var router: (NSObjectProtocol & MainRoutingLogic & MainDataPassing)?
     
-    var chars: [Char] = []
+    var chars: [Char] = [] {
+        didSet {
+            tableView.reloadData()
+        }
+    }
 
     // MARK: Setup
   
@@ -55,9 +59,38 @@ class MainViewController: BaseViewController, MainDisplayLogic {
 
     // MARK: Show greeting
 
-    private var greetingLabel: UILabel!
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.rowHeight = 80
+        tableView.separatorStyle = .none
+        tableView.register(CharTableCell.self, forCellReuseIdentifier: String(describing: CharTableCell.self))
+        view.addSubview(tableView)
+        return tableView
+    }()
+    
+    private lazy var appearance: UINavigationBarAppearance = {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor.gray1
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.blue]
+        return appearance
+    }()
 
     private func configureUI() {
+        navigationItem.title = "List"
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            make.leading.equalToSuperview().offset(20)
+            make.trailing.equalToSuperview().offset(-20)
+            make.bottom.equalToSuperview().offset(-20)
+        }
+        
+        
         view.backgroundColor = .yellow
         
         let view1 = UIButton(type: .system)
@@ -86,5 +119,25 @@ class MainViewController: BaseViewController, MainDisplayLogic {
     
     func loadNextCharacters() {
         interactor?.loadNextCharacters()
+    }
+}
+
+extension MainViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        chars.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: CharTableCell.self), for: indexPath) as? CharTableCell else { return UITableViewCell() }
+        cell.char = chars[indexPath.row]
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
     }
 }
