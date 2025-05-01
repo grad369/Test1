@@ -25,7 +25,9 @@ enum TestError: Error {
     }
     
     static func text(from error: Error) -> String {
-        guard let testError = error as? TestError else { return error.localizedDescription }
+        guard let testError = error as? TestError else {
+            return error.localizedDescription
+        }
         return testError.text
     }
 }

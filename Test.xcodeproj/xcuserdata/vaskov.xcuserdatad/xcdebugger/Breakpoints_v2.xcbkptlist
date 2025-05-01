@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "CF69CD9F-687D-46E7-B63B-5EC7D3E7830A"
-            shouldBeEnabled = "Yes"
+            uuid = "FC4038DA-A708-4E2C-9223-BBD54DDE5B5B"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Test/Protocols/BaseProtocols.swift"
+            filePath = "Test/CommonUI/BaseView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "14"
-            endingLineNumber = "14"
-            landmarkName = "showAlert(type:text:)"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
+            landmarkName = "layoutSubviews()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -12,9 +12,10 @@
 
 import UIKit
 
+
 protocol MainPresentationLogic: BasePresentationLogic {
     func presentFromDB(cdChars: [CDCharacter])
-    func addNew(chars: [Char])
+    func addNew(chars: [CharacterModels.Char])
 }
 
 class MainPresenter: MainPresentationLogic {
@@ -25,13 +26,13 @@ class MainPresenter: MainPresentationLogic {
         viewController?.chars = chars
     }
     
-    func addNew(chars: [Char]) {
+    func addNew(chars: [CharacterModels.Char]) {
         viewController?.chars += chars
     }
     
-    private func convertToChars(cdChars: [CDCharacter]) -> [Char] {
+    private func convertToChars(cdChars: [CDCharacter]) -> [CharacterModels.Char] {
         cdChars.map { cdChar in
-            var char = Char(id: Int(cdChar.id))
+            var char = CharacterModels.Char(id: Int(cdChar.id))
             char.gender = cdChar.gender
             char.image = cdChar.image
             char.created = cdChar.created

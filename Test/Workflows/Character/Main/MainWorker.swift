@@ -8,14 +8,14 @@ import CoreData
 
 
 protocol CoreDataWorkerProtocol {
-    var bdIsEmpty: Bool { get }
-    func save(chars: [Char]) async -> Result<Void, Error>
+    var dbIsEmpty: Bool { get }
+    func save(chars: [CharacterModels.Char]) async -> Result<Void, Error>
     func fetchAllChars() -> Result<[CDCharacter], Error>
     func deleteAllChars() async -> Result<Void, Error>
 }
 
 protocol ApiWorkerProtocol {
-    func loadNewChars() async -> Result<[Char], Error>
+    func loadNewChars() async -> Result<[CharacterModels.Char], Error>
 }
 
 class MainWorker: CoreDataWorkerProtocol, ApiWorkerProtocol {
@@ -23,17 +23,17 @@ class MainWorker: CoreDataWorkerProtocol, ApiWorkerProtocol {
     private let apiService = ApiService()
     
     // MARK: CoreDataWorkerProtocol -
-    var bdIsEmpty: Bool {
+    var dbIsEmpty: Bool {
         coreDataStack.isEntityEmpty(entityType: CDCharacter.self, context: coreDataStack.mainContext)
     }
     
-    func save(chars: [Char]) async -> Result<Void, Error> {
+    func save(chars: [CharacterModels.Char]) async -> Result<Void, Error> {
         let context = coreDataStack.backgroundContext()
         
         let existCharIds = checkExistingChars(ids: chars.map { $0.id })
             .map { Int($0) }
         let noExistChars = chars
-            .filter { existCharIds.contains($0.id) }
+            .filter { !existCharIds.contains($0.id) }
         
         for char in noExistChars {
             let cdChar = CDCharacter(context: context)
@@ -81,9 +81,9 @@ class MainWorker: CoreDataWorkerProtocol, ApiWorkerProtocol {
     }
     
     // MARK: ApiWorkerProtocol -
-    func loadNewChars() async -> Result<[Char], Error> {
+    func loadNewChars() async -> Result<[CharacterModels.Char], Error> {
         do {
-            let chars = try await apiService.next(type: Char.self)
+            let chars = try await apiService.next(type: CharacterModels.Char.self)
             return .success(chars)
         } catch {
             return .failure(error)

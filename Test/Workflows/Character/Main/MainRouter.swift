@@ -16,12 +16,12 @@ protocol MainRoutingLogic {
     func showDetail(for item: CharacterModels.Char)
 }
 
-class MainRouter: NSObject, MainRoutingLogic {
+class MainRouter: MainRoutingLogic {
     weak var viewController: MainViewController?
-
         
     func showDetail(for item: CharacterModels.Char) {
-        let detailVC = DetailViewController(char: CharacterModels.Char)
+        let detailVC = DetailViewController()
+        detailVC.char = item
         viewController?.navigationController?.pushViewController(detailVC, animated: true)
     }
 }

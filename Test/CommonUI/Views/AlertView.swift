@@ -105,7 +105,7 @@ fileprivate extension AlertView.AlertType {
     var backgroundColor: UIColor {
         switch self {
         case .success:
-            return .gray1
+            return .green1
         case .warning:
             return .red1
         }
@@ -114,7 +114,7 @@ fileprivate extension AlertView.AlertType {
     var borderColor: UIColor {
         switch self {
         case .success:
-            return .purple1
+            return .white
         case .warning:
             return .gray1
         }
@@ -123,7 +123,7 @@ fileprivate extension AlertView.AlertType {
     var textColor: UIColor {
         switch self {
         case .success:
-            return .text
+            return .white
         case .warning:
             return .white
         }

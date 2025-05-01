@@ -24,7 +24,7 @@ class ApiService {
             throw TestError.badServer
         }
         
-        guard let parsedResponse = try? JSONDecoder().decode(Response<T>.self, from: data) else { throw TestError.badParser }
+        guard let parsedResponse = try? JSONDecoder().decode(CharacterModels.Response<T>.self, from: data) else { throw TestError.badParser }
         
         if let next = parsedResponse.info.next {
             nextRequest = next

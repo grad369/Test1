@@ -15,16 +15,16 @@ import SnapKit
 
 
 protocol MainDisplayLogic: AnyObject {
-    var chars: [Char] { set get }
+    var chars: [CharacterModels.Char] { set get }
     //func displayCharacters()
 }
 
 
 class MainViewController: BaseViewController, MainDisplayLogic {    
     var interactor: MainBusinessLogic?
-    var router: (NSObjectProtocol & MainRoutingLogic & MainDataPassing)?
+    var router: MainRoutingLogic?
     
-    var chars: [Char] = [] {
+    var chars: [CharacterModels.Char] = [] {
         didSet {
             tableView.reloadData()
         }
@@ -45,7 +45,6 @@ class MainViewController: BaseViewController, MainDisplayLogic {
         interactor.apiWorker = worker
         presenter.viewController = viewController
         router.viewController = viewController
-        router.dataStore = interactor
     }
   
     // MARK: View lifecycle
@@ -54,13 +53,14 @@ class MainViewController: BaseViewController, MainDisplayLogic {
         super.viewDidLoad()
         configureUI()
                
-        interactor?.checkStateIsFirst()
+        interactor?.checkStateIsEmptyDB()
     }
 
-    // MARK: Show greeting
+    // MARK: Configuration -
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
+        tableView.backgroundColor = .clear
         tableView.delegate = self
         tableView.dataSource = self
         tableView.rowHeight = 80
@@ -74,7 +74,7 @@ class MainViewController: BaseViewController, MainDisplayLogic {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = UIColor.gray1
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.blue]
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.purple1]
         return appearance
     }()
 
@@ -89,36 +89,11 @@ class MainViewController: BaseViewController, MainDisplayLogic {
             make.trailing.equalToSuperview().offset(-20)
             make.bottom.equalToSuperview().offset(-20)
         }
-        
-        
-        view.backgroundColor = .yellow
-        
-        let view1 = UIButton(type: .system)
-        view1.frame = .init(x: 50, y: 50, width: 100, height: 100)
-        view1.backgroundColor = .cyan
-        view1.addAction(UIAction(handler: {_ in
-            AlertView.show(with: .warning, text: TestError.allDownload.text)
-        }), for: .touchUpInside)
-        view.addSubview(view1)
-        
-        view1.snp.makeConstraints { make in
-            make.center.equalTo(CGPoint(x: 200, y: 200))
-            make.size.equalTo(CGSize(width: 150, height: 100))
-        }
+        view.backgroundColor = .yellow.withAlphaComponent(0.5)
     }
     
     override func updateViewConstraints() {
         super.updateViewConstraints()
-    }
-    
-    func showCharacters() {
-        //let request = Main.ShowGreeting.Request()
-        interactor?.showFromDBCharacters()
-    }
-    
-    
-    func loadNextCharacters() {
-        interactor?.loadNextCharacters()
     }
 }
 
@@ -134,10 +109,12 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
+        guard indexPath.row == chars.count - 1 else { return }
+        interactor?.loadNextCharacters()
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        let char = chars[indexPath.row]
+        router?.showDetail(for: char)
     }
 }

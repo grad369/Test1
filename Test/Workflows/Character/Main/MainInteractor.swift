@@ -13,7 +13,7 @@
 import UIKit
 
 protocol MainBusinessLogic {
-    func checkStateIsFirst()
+    func checkStateIsEmptyDB()
     func showFromDBCharacters()
     func loadNextCharacters()
 }
@@ -26,8 +26,8 @@ class MainInteractor: MainBusinessLogic, MainDataStore {
     var coreDataWorker: CoreDataWorkerProtocol?
     var apiWorker: ApiWorkerProtocol?
     
-    func checkStateIsFirst() {
-        if coreDataWorker?.bdIsEmpty == true {
+    func checkStateIsEmptyDB() {
+        if coreDataWorker?.dbIsEmpty == true {
             loadNextCharacters()
         } else {
             showFromDBCharacters()
@@ -59,7 +59,11 @@ class MainInteractor: MainBusinessLogic, MainDataStore {
             return value
         case .failure(let error):
             DispatchQueue.main.async {
-                self.presenter?.showAlert(type: .warning, text: TestError.text(from: error))
+                if let testError = error as? TestError, testError == .allDownload {
+                    self.presenter?.showAlert(type: .success, text: TestError.text(from: error))
+                } else {
+                    self.presenter?.showAlert(type: .warning, text: TestError.text(from: error))
+                }                
             }
             return nil
         }

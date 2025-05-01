@@ -12,6 +12,7 @@
 
 import UIKit
 
+
 enum CharacterModels {
     struct Response<T: Decodable>: Decodable {
         var info: Info
